@@ -1,6 +1,7 @@
 import React from 'react'
 import {Jumbotron , Button, FormGroup, FormControl} from 'react-bootstrap'
-
+import {Link} from 'react-router'
+import {browserHistory} from 'react-router'
 const NewForm = React.createClass({
   getInitialState() {
     return {
@@ -23,9 +24,6 @@ const NewForm = React.createClass({
     //send it back to the parent
 
     let {name, location, cuisine} = this.state
-    // console.log('name ', name)
-    // console.log('location ', location)
-    // console.log('cuisine ', cuisine)
 
     if (name && location && cuisine) {
       // let data = new FormData();
@@ -56,7 +54,9 @@ const NewForm = React.createClass({
           <FormControl type="text" value={this.state.location} placeholder="Enter Location" onChange={this.newLocation} />
           <FormControl type="text" value={this.state.cuisine} placeholder="Cuisine Type" onChange={this.newCuisine} />
         </FormGroup>
-        <Button bsStyle="primary" onClick={this.newRestaurantInfo}>New Restaurant</Button>
+        <Link to="/home">
+          <Button bsStyle="primary" onClick={this.newRestaurantInfo}>New Restaurant</Button>
+        </Link>
       </form>
     );
   }
@@ -66,7 +66,9 @@ const NewForm = React.createClass({
 const Splash = React.createClass({
   getInitialState(){
     return{
-      name: ''
+      name: '',
+      menu: [],
+      restaurantId: ""
     }
   },
   resName(e){
@@ -82,6 +84,7 @@ const Splash = React.createClass({
     //Fetching Getting the api restaurant
 
     let url = "/api/restaurant"
+    let newRestaurant
     fetch(url)
       .then(Response => {
         return Response.json()
@@ -90,11 +93,14 @@ const Splash = React.createClass({
         let newRestaurant = data.filter(val => val.name === this.state.name)
         
         if (newRestaurant.length !== 0) {
-          alert('Works!!!')
+        this.setState({restaurantId: newRestaurant[0].id});
+        browserHistory.push(`/home/${this.state.restaurantId}`)
         }
-
         else {
          alert('Restaurant not found')
+         return new Promise((resolve, reject) => {
+         reject('Restaurant not found');
+         });
         }
       })
       .catch(err => {
@@ -112,7 +118,10 @@ const Splash = React.createClass({
           <FormGroup>
           <FormControl type="text" value={this.state.name} placeholder="Enter Name" onChange={this.resName}/>
           </FormGroup>
+          
           <Button bsStyle="primary" onClick={this.restaurantValidation}>Go to Menu</Button>
+          
+            
         </div>
 
         <div className="col-xs-1">
