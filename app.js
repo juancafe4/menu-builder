@@ -18,3 +18,19 @@ const port = process.env.PORT || 8000;
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true}))
+
+app.use(express.static('public'));
+
+
+//Routes
+app.get('*', (req, res) => {
+  res.render('public/index');
+});
+
+app.use('/api/restaurant', require('./routes/restaurants'))
+app.use('/api/menu', require('./routes/menus'))
+
+//Server listen
+app.listen(port), err => {
+  console.log(err || `Listenning at ${port}`);
+}
