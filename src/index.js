@@ -1,6 +1,6 @@
 import React from 'react'
 import {render} from 'react-dom'
-import Splash from './components/splash'
+import Splash from './components/Splash'
 
 const App = React.createClass({
   render(){

@@ -13,7 +13,7 @@ const port = process.env.PORT || 8000;
 
 //VIEW CONFIGURATION
 // app.set('view engine', 'ejs')
-app.set('views', './public')// We do not need it because it is set to default
+app.set('views', './public')// Sets to html 
 //MIDDLEWARES
 app.use(morgan('dev'));
 app.use(bodyParser.json());
@@ -25,13 +25,13 @@ app.use('/api/restaurant', require('./routes/restaurants'))
 app.use('/api/menu', require('./routes/menus'))
 
 //Routes
-app.get('*', (req, res) => {
-  res.render(path.join(__dirname, 'public/index'));
-});
-
 // app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'public/index.html'));
+//   res.render(path.join(__dirname, 'public/index'));
 // });
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/index.html'));
+});
 
 
 //Server listen

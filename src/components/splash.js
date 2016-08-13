@@ -18,6 +18,36 @@ const NewForm = React.createClass({
   newCuisine(e) {
     this.setState({cuisine: e.target.value});
   },
+  newRestaurantInfo() {
+    //make an object with the information from the user input
+    //send it back to the parent
+
+    let {name, location, cuisine} = this.state
+    // console.log('name ', name)
+    // console.log('location ', location)
+    // console.log('cuisine ', cuisine)
+
+    if (name && location && cuisine) {
+      // let data = new FormData();
+      let newRest = {name, location, cuisine};
+      // data.append('json', JSON.stringify(newRest))
+
+      fetch("/api/restaurant/",
+          {
+          method: "POST",
+          headers: {  
+            "Content-type": "application/json"  
+          },  
+          body: JSON.stringify({name: name, location: location, cuisine: cuisine})
+          })
+          .then(() => console.log('done') )
+          .catch((err)=>{ console.log('err:', err)})
+
+    }
+    // let newRstObj;
+
+    // this.props.makeNew(newRstObj)
+  },
   render() {
     return (
       <form>
@@ -26,7 +56,7 @@ const NewForm = React.createClass({
           <FormControl type="text" value={this.state.location} placeholder="Enter Location" onChange={this.newLocation} />
           <FormControl type="text" value={this.state.cuisine} placeholder="Cuisine Type" onChange={this.newCuisine} />
         </FormGroup>
-        <Button bsStyle="primary">New Restaurant</Button>
+        <Button bsStyle="primary" onClick={this.newRestaurantInfo}>New Restaurant</Button>
       </form>
     );
   }
@@ -42,22 +72,55 @@ const Splash = React.createClass({
   resName(e){
     this.setState({name: e.target.value})
   },
+  newRestaurant(newRestObj){
+    //send a new restaurant to the backend
+    //make an fetch request to /api/restaurant
+  },
+  restaurantValidation(e){
+    //validate a restaurant from the backend and then pull up their menu items
+    
+    //Fetching Getting the api restaurant
+
+    let url = "/api/restaurant"
+    fetch(url)
+      .then(Response => {
+        return Response.json()
+      })
+      .then(data => {
+        let newRestaurant = data.filter(val => val.name === this.state.name)
+        
+        if (newRestaurant.length !== 0) {
+          alert('Works!!!')
+        }
+
+        else {
+         alert('Restaurant not found')
+        }
+      })
+      .catch(err => {
+        console.log('err ', err)
+      });
+  },
   render(){
     return(
     <Jumbotron>
       <h1>Menu Builder</h1>
       <p>Join the future, build dynamic menus for your restaurant today!</p>
       <div className="row">
-        <div className="col-md-6">
+        <div className="col-xs-4">
         <h3>Enter Restaurant Name</h3>
           <FormGroup>
           <FormControl type="text" value={this.state.name} placeholder="Enter Name" onChange={this.resName}/>
           </FormGroup>
-          <Button bsStyle="primary">Go to Menu</Button>
+          <Button bsStyle="primary" onClick={this.restaurantValidation}>Go to Menu</Button>
         </div>
-        <div className="col-md-6">
+
+        <div className="col-xs-1">
+          <h3>or</h3>
+        </div>
+        <div className="col-xs-6">
         <h3>Enter a New Restaurant</h3>
-          <NewForm />
+          <NewForm makeNew={this.newRestaurant}/>
       </div>
       </div>
     </Jumbotron>

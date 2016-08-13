@@ -6,7 +6,8 @@
   "scripts": {
     "serve": "webpack-dev-server --port 3000 --inline --hot --content-base public/ --history-api-fallback",
     "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack --watch --inline --hot"
   },
   "engines": {
     "node": "6.3.1"

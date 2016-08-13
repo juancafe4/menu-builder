@@ -33,6 +33,9 @@ exports.getAll = function(){
 //cuisine -> String
 exports.create = function(newRestaurant){
   return new Promise((resolve, reject)=>{
+    
+    console.log(newRestaurant)
+    
     let sql = squel.insert()
     .into('restaurants')
     .setFields(newRestaurant)
