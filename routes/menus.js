@@ -11,9 +11,10 @@ router.get('/', (req, res) =>{
               res.send(menus);
             })
             .catch(err=>{
+              console.log(err)
               res.status(400).send(err);
             })
-}
+})
 
 router.post('/', (req, res)=>{
   menu.create(req.body)
@@ -36,7 +37,7 @@ router.get('/:id', (req, res)=>{
 })
 
 router.delete('/:id', (req, res)=>{
-  menu.getOne(req.params.id)
+  menu.delete(req.params.id)
             .then(()=>{
               res.send();
             })
@@ -46,13 +47,18 @@ router.delete('/:id', (req, res)=>{
 })
 
 router.put('/:id', (req, res)=>{
+
   menu.update(req.params.id, req.body)
             .then(()=>{
-              res.send();
+              return menu.getOne(req.params.id)
+            })
+            .then(mn => {
+              res.send(mn)
             })
             .catch(err =>{
+              console.log(err)
               res.status(400).send(err);
-            })
+            });
 })
 
-
+module.exports = router

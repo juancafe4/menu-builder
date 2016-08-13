@@ -36,25 +36,28 @@ router.get('/:id', (req, res)=>{
             })
 })
 
+router.delete('/:id', (req, res)=>{
+  restaurant.delete(req.params.id)
+            .then(()=>{
+              res.send();
+            })
+            .catch(err =>{
+              res.status(400).send(err);
+            })
+})
+
+router.put('/:id', (req, res)=>{
+  restaurant.update(req.params.id, req.body)
+            .then(()=>{
+              return restaurant.getOne(req.params.id)
+            })
+            .then(rst => {
+              res.send(rst)
+            })
+            .catch(err =>{
+              res.status(400).send(err);
+            })
+})
+
 module.exports = router
-// router.delete('/:id', (req, res)=>{
-//   restaurant.getOne(req.params.id)
-//             .then(()=>{
-//               res.send();
-//             })
-//             .catch(err =>{
-//               res.status(400).send(err);
-//             })
-// })
-
-// router.put('/:id', (req, res)=>{
-//   restaurant.update(req.params.id, req.body)
-//             .then(()=>{
-//               res.send();
-//             })
-//             .catch(err =>{
-//               res.status(400).send(err);
-//             })
-// })
-
 

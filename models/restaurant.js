@@ -54,10 +54,35 @@ exports.getOne = function(id) {
     let sql = squel.select().from('restaurants')
     .where(`id="${id}"`)
     .toString()
-    db.query(sql, (err , assignments) => {
+    db.query(sql, (err , restaurants) => {
       if (err) reject(err)
-      else if(!assgn) reject("Error: restaurant could not be found!")
-          else resolve(assgn)
+      else if(!restaurants[0]) reject("Error: restaurant could not be found!")
+          else resolve(restaurants[0])
     });
   });
 }
+
+exports.delete = function(id) {
+  return new Promise((resolve, reject) => {
+    let sql = squel.delete().from('restaurants').where(`id="${id}"`).toString()
+    
+    db.query(sql, (err , restaurants) => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+}
+
+exports.update = function(id, updateRes) {
+  return new Promise((resolve, reject) => {
+    delete updateRes.id;
+    let sql = squel.update().table('restaurants').setFields(updateRes).where(`id="${id}"`).toString();
+    
+    db.query(sql, err => {
+      console.log('err')
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+}
+

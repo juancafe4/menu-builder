@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true}))
 app.use(express.static('public'));
 
 app.use('/api/restaurant', require('./routes/restaurants'))
-// app.use('/api/menu', require('./routes/menus'))
+app.use('/api/menu', require('./routes/menus'))
 
 //Routes
 app.get('*', (req, res) => {
