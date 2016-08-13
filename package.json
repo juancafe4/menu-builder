@@ -7,7 +7,7 @@
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "engines":{
+  "engines": {
     "node": "6.3.1"
   },
   "keywords": [],
@@ -16,6 +16,7 @@
   "dependencies": {
     "body-parser": "^1.15.2",
     "dotenv": "^2.0.0",
+    "ejs": "^2.5.1",
     "express": "^4.14.0",
     "morgan": "^1.7.0",
     "mysql": "^2.11.1",
