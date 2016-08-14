@@ -6,7 +6,6 @@ const router = express.Router();
 let restaurant = require('../models/restaurant')
 
 router.get('/', (req, res) =>{
-  console.log('here')
   restaurant.getAll()
             .then(restaurants =>{
               res.send(restaurants);
@@ -18,8 +17,9 @@ router.get('/', (req, res) =>{
 
 router.post('/', (req, res)=>{
   restaurant.create(req.body)
-            .then(()=>{
-              res.send();
+            .then(id =>{
+              console.log(id)
+              res.send(id)
             })
             .catch(err =>{
               res.status(400).send(err);

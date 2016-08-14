@@ -35,7 +35,6 @@ const EditModal = React.createClass({
 
   render() {
     if (this.state.name) {
-      console.log('render menu ', this.state.menu)
     return (
       <Modal show={this.props.show} onHide={this.props.onHide} bsSize="small" aria-labelledby="contained-modal-title-sm">
         <Modal.Header closeButton>
@@ -44,10 +43,10 @@ const EditModal = React.createClass({
          <form>
          <FormGroup>
         <Modal.Body>
-          <input type="text" value={this.state.name} onChange={this.changeName}/>
-          <input type="text" value={this.state.price} onChange={this.changePrice}/>
-          <input type="text" value={this.state.type} onChange={this.changeType}/>
-          <input type="text" value={this.state.picUrl} onChange={this.changePicUrl}/>
+          <FormControl type="text" value={this.state.name} onChange={this.changeName}/>
+          <FormControl type="text" value={this.state.price} onChange={this.changePrice}/>
+          <FormControl type="text" value={this.state.type} onChange={this.changeType}/>
+          <FormControl type="text" value={this.state.picUrl} onChange={this.changePicUrl}/>
           <Image src={this.state.picUrl} rounded responsive />
         </Modal.Body>
         <Modal.Footer>

@@ -33,19 +33,18 @@ exports.getAll = function(){
 //cuisine -> String
 exports.create = function(newRestaurant){
   return new Promise((resolve, reject)=>{
-    
-    console.log(newRestaurant)
-    
+    let id = uuid()
     let sql = squel.insert()
     .into('restaurants')
     .setFields(newRestaurant)
-    .set('id', uuid())
+    .set('id', id)
     .toString()
-    db.query(sql, (err, restaurants) =>{
+
+    db.query(sql, err =>{
       if(err){
         reject(err);
       } else {
-        resolve(restaurants);
+        resolve({id});
       }
     })
   })

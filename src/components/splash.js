@@ -38,7 +38,12 @@ const NewForm = React.createClass({
           },  
           body: JSON.stringify({name: name, location: location, cuisine: cuisine})
           })
-          .then(() => console.log('done') )
+          .then(Response =>{
+            return Response.json()
+          })
+          .then(data =>{
+            browserHistory.push(`/home/${data.id}`)
+          })
           .catch((err)=>{ console.log('err:', err)})
 
     }
@@ -54,9 +59,7 @@ const NewForm = React.createClass({
           <FormControl type="text" value={this.state.location} placeholder="Enter Location" onChange={this.newLocation} />
           <FormControl type="text" value={this.state.cuisine} placeholder="Cuisine Type" onChange={this.newCuisine} />
         </FormGroup>
-        <Link to="/home">
           <Button bsStyle="primary" onClick={this.newRestaurantInfo}>New Restaurant</Button>
-        </Link>
       </form>
     );
   }
@@ -74,13 +77,8 @@ const Splash = React.createClass({
   resName(e){
     this.setState({name: e.target.value})
   },
-  newRestaurant(newRestObj){
-    //send a new restaurant to the backend
-    //make an fetch request to /api/restaurant
-  },
   restaurantValidation(e){
     //validate a restaurant from the backend and then pull up their menu items
-    
     //Fetching Getting the api restaurant
 
     let url = "/api/restaurant"
@@ -129,7 +127,7 @@ const Splash = React.createClass({
         </div>
         <div className="col-xs-6">
         <h3>Enter a New Restaurant</h3>
-          <NewForm makeNew={this.newRestaurant}/>
+          <NewForm />
       </div>
       </div>
     </Jumbotron>
