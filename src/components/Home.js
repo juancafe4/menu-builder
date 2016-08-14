@@ -1,5 +1,6 @@
 import React from 'react'
 import {Image, Table, Modal, Button, FormGroup, FormControl} from 'react-bootstrap'
+import AddModal from './AddModal'
 
 //destructuring in the home
 const MenuFetch = React.createClass({
@@ -7,26 +8,68 @@ const MenuFetch = React.createClass({
     return{
       restId: this.props.params.id,
       menu: [],
+      restaurant: {},
+      addShow: false,
     }
+  },
+  updateMenu(newItem){
+   let newMenu = this.state.menu.map(item =>{
+    if(item.id === newItem.id){
+      return newItem;
+    } else {
+      return item;
+    }
+   })
+   this.setState({menu: newMenu})
+  },
+  onSubmit(){
+    console.log('add')
+  },
+  openAddModal(item){
+    this.setState({addShow: true })
   },
   componentWillMount(){
      let url = '/api/menu'
      fetch(url)
       .then(Response => {
-      return Response.json();
+        return Response.json();
       })
       .then(data => {
 
         let newMenu = data.filter(data => this.props.params.id === data.resId)
         this.setState({menu: newMenu})
+
+        return fetch(`/api/restaurant/${this.props.params.id}`)
+      })
+      .then(Response => {
+        return Response.json();
+      })
+      .then(data => {
+        this.setState({restaurant: data})
       })
       .catch(err => {
         console.log(err)
       })
   },
   render() {
-    if (this.state.menu.length){
-      return (<Home menu={this.state.menu}/>)
+    let smClose = () => this.setState({ addShow: false });
+    if (this.state.restaurant.id){
+    let resName = this.state.restaurant.name.toUpperCase();
+      return (
+        <div>
+        <div className="row">
+          <div className="col-xs-8">
+          <h2>{resName} || {this.state.restaurant.location} || {this.state.restaurant.cuisine}</h2>
+          </div>
+          <div className="col-xs-4">
+          <br />
+          <Button onClick={this.openAddModal} className="btn-success fa fa-plus-square fa-sm"></Button>
+          </div>
+        </div>
+        <Home menu={this.state.menu} update={this.updateMenu}/>
+        <AddModal show={this.state.addShow} onSubmit={this.submit} onHide={this.close} add={this.state.addNew}/>
+        </div>
+        )
     }
     else
       return <h1>Loading...</h1>
@@ -47,6 +90,27 @@ const Home = React.createClass({
   close() {
     this.setState({smShow: false})
   },
+  submit(newItem) {
+    this.setState({smShow: false})
+    let url = `/api/menu/${newItem.id}`;
+    
+    fetch(url, {
+      method: 'PUT',
+      headers:{
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newItem)
+    })
+    .then(Response =>{
+      return Response.json()
+    })
+    .then(data =>{
+      this.props.update(data)
+    })
+    .catch(err => {
+      console.log('err:', err)
+    })
+  },
   render(){
 
     let smClose = () => this.setState({ smShow: false });
@@ -57,8 +121,8 @@ const Home = React.createClass({
           <td className="col-xs-2">{item.type}</td>
           <td className="col-xs-1">{item.price}</td>
           <td className="col-xs-2"><Image src={item.picUrl} rounded responsive /></td>
-          <td className="col-xs-1"><button onClick={this.showModal.bind(null, item)} className="btn btn-info fa fa-pencil-square-o"></button></td>
-          <td className="col-xs-1"><button onClick={this.deleteMenu} className="btn btn-danger fa fa-trash"></button></td>
+          <td className="col-xs-1"><Button onClick={this.showModal.bind(null, item)} className="btn btn-info fa fa-pencil-square-o"></Button></td>
+          <td className="col-xs-1"><Button onClick={this.deleteMenu} className="btn btn-danger fa fa-trash"></Button></td>
         </tr>
       )
     )
@@ -77,7 +141,7 @@ const Home = React.createClass({
         <tbody>
           {menuItems}
         </tbody>
-      <MySmallModal show={this.state.smShow} onHide={this.close} menu={this.state.editMenu}/>
+      <MySmallModal show={this.state.smShow} onSubmit={this.submit} onHide={this.close} menu={this.state.editMenu}/>
       </Table>  
     )
   }
@@ -109,6 +173,9 @@ const MySmallModal = React.createClass({
   changePicUrl(e){
     this.setState({picUrl: e.target.value})
   },
+  onEdit(){
+    this.props.onSubmit(this.state);
+  },
   render() {
     let {id, name, picUrl, price, type} = this.props.menu;
     
@@ -128,7 +195,7 @@ const MySmallModal = React.createClass({
           <Image src={this.state.picUrl} rounded responsive />
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.props.onHide}>Save Changes</Button>
+          <Button onClick={this.onEdit}>Save Changes</Button>
           <Button onClick={this.props.onHide}>Close</Button>
         </Modal.Footer>
         </FormGroup>

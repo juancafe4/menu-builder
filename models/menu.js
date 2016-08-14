@@ -82,7 +82,7 @@ exports.update = function(id, updateObj) {
     db.query(sql, err => {
       if (err) reject(err)
         else resolve()
-      })
+    })
   })
 }
 
