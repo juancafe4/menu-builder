@@ -1,5 +1,5 @@
 import React from 'react'
-import {Image, Table, Modal} from 'react-bootstrap'
+import {Image, Table, Modal, Button, FormGroup, FormControl} from 'react-bootstrap'
 
 //destructuring in the home
 const MenuFetch = React.createClass({
@@ -36,13 +36,20 @@ const MenuFetch = React.createClass({
 const Home = React.createClass({
   getInitialState(){
     return {
-      menu: this.props.menu
+      menu: this.props.menu,
+      smShow: false,
+      editMenu: this.props.menu[0]
     }
   },
-  editMenu(){
-    <modalInstance />
+  showModal(item){
+    this.setState({editMenu: item, smShow: true })
+  },
+  close() {
+    this.setState({smShow: false})
   },
   render(){
+
+    let smClose = () => this.setState({ smShow: false });
     let menuItems = this.props.menu.map(item =>
       ( 
         <tr key={item.id}>
@@ -50,9 +57,8 @@ const Home = React.createClass({
           <td className="col-xs-2">{item.type}</td>
           <td className="col-xs-1">{item.price}</td>
           <td className="col-xs-2"><Image src={item.picUrl} rounded responsive /></td>
-          <td className="col-xs-1"><button onClick={this.editMenu} className="btn btn-info fa fa-pencil-square-o"></button></td>
+          <td className="col-xs-1"><button onClick={this.showModal.bind(null, item)} className="btn btn-info fa fa-pencil-square-o"></button></td>
           <td className="col-xs-1"><button onClick={this.deleteMenu} className="btn btn-danger fa fa-trash"></button></td>
-          
         </tr>
       )
     )
@@ -71,31 +77,66 @@ const Home = React.createClass({
         <tbody>
           {menuItems}
         </tbody>
-        
+      <MySmallModal show={this.state.smShow} onHide={this.close} menu={this.state.editMenu}/>
       </Table>  
     )
   }
 })
 
-const modalInstance = (
-  <div className="static-modal">
-    <Modal.Dialog>
-      <Modal.Header>
-        <Modal.Title>Modal title</Modal.Title>
-      </Modal.Header>
-
-      <Modal.Body>
-        One fine body...
-      </Modal.Body>
-
-      <Modal.Footer>
-        <Button>Close</Button>
-        <Button bsStyle="primary">Save changes</Button>
-      </Modal.Footer>
-
-    </Modal.Dialog>
-  </div>
-);
+const MySmallModal = React.createClass({
+  getInitialState(){
+    return{
+     name: "",
+     price: "",
+     type: "",
+     picUrl: "",
+     id: ""
+    }
+  },
+  componentWillMount() {
+    let {id, name, picUrl, price, type} = this.props.menu;
+    this.setState({name: name, price: price, type: type, picUrl: picUrl, id: id})
+  },
+  changeName(e){
+    this.setState({name: e.target.value})
+  },
+  changePrice(e){
+    this.setState({price: e.target.value})
+  },
+  changeType(e){
+    this.setState({type: e.target.value})
+  },
+  changePicUrl(e){
+    this.setState({picUrl: e.target.value})
+  },
+  render() {
+    let {id, name, picUrl, price, type} = this.props.menu;
+    
+   
+    return (
+      <Modal show={this.props.show} onHide={this.props.onHide} bsSize="small" aria-labelledby="contained-modal-title-sm">
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-sm">Edit {name}</Modal.Title>
+        </Modal.Header>
+         <form>
+         <FormGroup>
+        <Modal.Body>
+          <FormControl type="text" value={this.state.name} onChange={this.changeName}/>
+          <FormControl type="text" value={this.state.price} onChange={this.changePrice}/>
+          <FormControl type="text" value={this.state.type} onChange={this.changeType}/>
+          <FormControl type="text" value={this.state.picUrl} onChange={this.changePicUrl}/>
+          <Image src={this.state.picUrl} rounded responsive />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={this.props.onHide}>Save Changes</Button>
+          <Button onClick={this.props.onHide}>Close</Button>
+        </Modal.Footer>
+        </FormGroup>
+        </form>
+      </Modal>
+    );
+  }
+});
 
 
 export default MenuFetch;
