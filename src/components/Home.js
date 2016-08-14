@@ -22,8 +22,46 @@ const MenuFetch = React.createClass({
    })
    this.setState({menu: newMenu})
   },
-  onSubmit(){
-    console.log('add')
+  deleteMenu(id) {
+    fetch(`/api/menu/${id}`, {
+      method: 'DELETE'
+    })
+    .then(Response => {
+      return Response.json()
+    })
+    .then(data => {
+      let newMenu = data.filter(val => val.resId === this.state.restId)
+      this.setState({menu: newMenu})
+    })
+    .catch(err => {
+      console.log("Could not delete menu ", err)
+    })
+  },
+  onSubmit(item){
+    this.setState({addShow: false})
+    item.resId = this.state.restId
+    let url = '/api/menu/'
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(item)
+    })
+    .then(Response =>{
+      return Response.json()
+    })
+    .then(data =>{
+      let newMenu = data.filter(val => val.resId === this.state.restId)
+      this.setState({menu: newMenu})
+    })
+    .catch(err =>{
+      console.log('err:', err)
+    })
+  },
+  close() {
+    this.setState({addShow: false})
   },
   openAddModal(item){
     this.setState({addShow: true })
@@ -66,8 +104,8 @@ const MenuFetch = React.createClass({
           <Button onClick={this.openAddModal} className="btn-success fa fa-plus-square fa-sm"></Button>
           </div>
         </div>
-        <Home menu={this.state.menu} update={this.updateMenu}/>
-        <AddModal show={this.state.addShow} onSubmit={this.submit} onHide={this.close} add={this.state.addNew}/>
+        <Home menu={this.state.menu} update={this.updateMenu} delete={this.deleteMenu}/>
+        <AddModal show={this.state.addShow} submit={this.onSubmit} onHide={this.close} add={this.state.addNew}/>
         </div>
         )
     }
@@ -81,8 +119,11 @@ const Home = React.createClass({
     return {
       menu: this.props.menu,
       smShow: false,
-      editMenu: this.props.menu[0]
+      editMenu: this.props.menu
     }
+  },
+  deleteMenu(item){
+    this.props.delete(item.id);
   },
   showModal(item){
     this.setState({editMenu: item, smShow: true })
@@ -122,7 +163,7 @@ const Home = React.createClass({
           <td className="col-xs-1">{item.price}</td>
           <td className="col-xs-2"><Image src={item.picUrl} rounded responsive /></td>
           <td className="col-xs-1"><Button onClick={this.showModal.bind(null, item)} className="btn btn-info fa fa-pencil-square-o"></Button></td>
-          <td className="col-xs-1"><Button onClick={this.deleteMenu} className="btn btn-danger fa fa-trash"></Button></td>
+          <td className="col-xs-1"><Button onClick={this.deleteMenu.bind(null, item)} className="btn btn-danger fa fa-trash"></Button></td>
         </tr>
       )
     )
@@ -188,10 +229,10 @@ const MySmallModal = React.createClass({
          <form>
          <FormGroup>
         <Modal.Body>
-          <FormControl type="text" value={this.state.name} onChange={this.changeName}/>
-          <FormControl type="text" value={this.state.price} onChange={this.changePrice}/>
-          <FormControl type="text" value={this.state.type} onChange={this.changeType}/>
-          <FormControl type="text" value={this.state.picUrl} onChange={this.changePicUrl}/>
+          <FormControl type="text" placeholder={name} value={this.state.name} onChange={this.changeName}/>
+          <FormControl type="text" placeholder={price} value={this.state.price} onChange={this.changePrice}/>
+          <FormControl type="text" placeholder={type} value={this.state.type} onChange={this.changeType}/>
+          <FormControl type="text" placeholder={picUrl} value={this.state.picUrl} onChange={this.changePicUrl}/>
           <Image src={this.state.picUrl} rounded responsive />
         </Modal.Body>
         <Modal.Footer>

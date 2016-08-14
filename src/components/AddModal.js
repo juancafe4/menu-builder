@@ -11,7 +11,6 @@ const AddModal = React.createClass({
      price: "",
      type: "",
      picUrl: "",
-     id: ""
     }
   },
   changeName(e){
@@ -26,15 +25,16 @@ const AddModal = React.createClass({
   changePicUrl(e){
     this.setState({picUrl: e.target.value})
   },
-  onAdd(){
-    this.props.onSubmit(this.state);
+  submit(){
+    this.setState({name: '', price: '', type: '', picUrl: ''})
+    this.props.submit(this.state);
   },
   render() {
    
     return (
       <Modal show={this.props.show} onHide={this.props.onHide} bsSize="small" aria-labelledby="contained-modal-title-sm">
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-sm">Edit {name}</Modal.Title>
+          <Modal.Title id="contained-modal-title-sm">Add New Menu Item</Modal.Title>
         </Modal.Header>
          <form>
          <FormGroup>
@@ -43,9 +43,10 @@ const AddModal = React.createClass({
           <FormControl type="text" placeholder="Price" value={this.state.price} onChange={this.changePrice}/>
           <FormControl type="text" placeholder="Type" value={this.state.type} onChange={this.changeType}/>
           <FormControl type="text" placeholder="Picture Url" value={this.state.picUrl} onChange={this.changePicUrl}/>
+          <Image src={this.state.picUrl} rounded responsive />
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.onAdd}>Add New</Button>
+          <Button onClick={this.submit}>Add New</Button>
           <Button onClick={this.props.onHide}>Close</Button>
         </Modal.Footer>
         </FormGroup>

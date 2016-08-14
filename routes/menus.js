@@ -19,7 +19,10 @@ router.get('/', (req, res) =>{
 router.post('/', (req, res)=>{
   menu.create(req.body)
             .then(()=>{
-              res.send();
+              return menu.getAll()
+            })
+            .then(menus => {
+              res.send(menus)
             })
             .catch(err =>{
               res.status(400).send(err);
@@ -39,7 +42,10 @@ router.get('/:id', (req, res)=>{
 router.delete('/:id', (req, res)=>{
   menu.delete(req.params.id)
             .then(()=>{
-              res.send();
+              return menu.getAll()
+            })
+            .then(menus => {
+              res.send(menus)
             })
             .catch(err =>{
               res.status(400).send(err);

@@ -44,6 +44,7 @@ exports.create = function(newMenu){
     .setFields(newMenu)
     .set('id', uuid())
     .toString()
+
     db.query(sql, (err, menu) =>{
       if(err){
         reject(err);
