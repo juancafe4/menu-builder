@@ -1,6 +1,7 @@
 import React from 'react'
 import {Image, Table, Modal, Button, FormGroup, FormControl} from 'react-bootstrap'
 import AddModal from './AddModal'
+import EditModal from './EditModal'
 
 //destructuring in the home
 const MenuFetch = React.createClass({
@@ -9,7 +10,7 @@ const MenuFetch = React.createClass({
       restId: this.props.params.id,
       menu: [],
       restaurant: {},
-      addShow: false,
+      addShow: false
     }
   },
   updateMenu(newItem){
@@ -119,14 +120,15 @@ const Home = React.createClass({
     return {
       menu: this.props.menu,
       smShow: false,
-      editMenu: this.props.menu
+      editMenu: {}
     }
   },
   deleteMenu(item){
     this.props.delete(item.id);
   },
   showModal(item){
-    this.setState({editMenu: item, smShow: true })
+    this.setState({editMenu: item})
+    this.setState({smShow: true })
   },
   close() {
     this.setState({smShow: false})
@@ -153,7 +155,7 @@ const Home = React.createClass({
     })
   },
   render(){
-
+   
     let smClose = () => this.setState({ smShow: false });
     let menuItems = this.props.menu.map(item =>
       ( 
@@ -167,84 +169,28 @@ const Home = React.createClass({
         </tr>
       )
     )
+
     return (
-      <Table className="container" hover={true}>
-      <thead>
-        <tr>
-          <th className="col-xs-2">Name</th>
-          <th className="col-xs-2">Type</th>
-          <th className="col-xs-1">Price $</th>
-          <th className="col-xs-2">Picture</th>
-          <th className="col-xs-1">Edit</th>
-          <th className="col-xs-1">Delete</th>
-        </tr>
-      </thead>
-        <tbody>
-          {menuItems}
-        </tbody>
-      <MySmallModal show={this.state.smShow} onSubmit={this.submit} onHide={this.close} menu={this.state.editMenu}/>
-      </Table>  
+     <div>
+             <Table className="container" hover={true}>
+             <thead>
+               <tr>
+                 <th className="col-xs-2">Name</th>
+                 <th className="col-xs-2">Type</th>
+                 <th className="col-xs-1">Price $</th>
+                 <th className="col-xs-2">Picture</th>
+                 <th className="col-xs-1">Edit</th>
+                 <th className="col-xs-1">Delete</th>
+               </tr>
+             </thead>
+               <tbody>
+                 {menuItems}
+               </tbody>
+             </Table>  
+              <EditModal show={this.state.smShow} onSubmit={this.submit} onHide={this.close} menu={this.state.editMenu}/>
+     </div>
     )
   }
 })
-
-const MySmallModal = React.createClass({
-  getInitialState(){
-    return{
-     name: "",
-     price: "",
-     type: "",
-     picUrl: "",
-     id: ""
-    }
-  },
-  componentWillMount() {
-    let {id, name, picUrl, price, type} = this.props.menu;
-    this.setState({name: name, price: price, type: type, picUrl: picUrl, id: id})
-  },
-  changeName(e){
-    this.setState({name: e.target.value})
-  },
-  changePrice(e){
-    this.setState({price: e.target.value})
-  },
-  changeType(e){
-    this.setState({type: e.target.value})
-  },
-  changePicUrl(e){
-    this.setState({picUrl: e.target.value})
-  },
-  onEdit(){
-    this.props.onSubmit(this.state);
-  },
-  render() {
-    let {id, name, picUrl, price, type} = this.props.menu;
-    
-   
-    return (
-      <Modal show={this.props.show} onHide={this.props.onHide} bsSize="small" aria-labelledby="contained-modal-title-sm">
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-sm">Edit {name}</Modal.Title>
-        </Modal.Header>
-         <form>
-         <FormGroup>
-        <Modal.Body>
-          <FormControl type="text" placeholder={name} value={this.state.name} onChange={this.changeName}/>
-          <FormControl type="text" placeholder={price} value={this.state.price} onChange={this.changePrice}/>
-          <FormControl type="text" placeholder={type} value={this.state.type} onChange={this.changeType}/>
-          <FormControl type="text" placeholder={picUrl} value={this.state.picUrl} onChange={this.changePicUrl}/>
-          <Image src={this.state.picUrl} rounded responsive />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={this.onEdit}>Save Changes</Button>
-          <Button onClick={this.props.onHide}>Close</Button>
-        </Modal.Footer>
-        </FormGroup>
-        </form>
-      </Modal>
-    );
-  }
-});
-
 
 export default MenuFetch;
